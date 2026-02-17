@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "chat-app"
+version = "0.1.0"
+description = "FastAPI Chat App with Pydantic AI"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic-ai>=0.0.15",
+    "click>=8.1.0",
+    "nono-py",
+]
+
+[project.scripts]
+chat-app = "chat_app.cli:cli"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "httpx>=0.26.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/chat_app"]
+sources = ["src"]
+
+[tool.uv.sources]
+nono-py = { path = "../nono-py", editable = true }
