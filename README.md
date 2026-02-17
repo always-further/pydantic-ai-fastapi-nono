@@ -1,14 +1,13 @@
 # Chat App -- nono Sandbox Demo
 
-A FastAPI chat application powered by [Pydantic AI](https://ai.pydantic.dev/) that demonstrates how [nono](https://github.com/always-further/nono) enforces kernel-level sandboxing on an AI agent. The agent has a `read_file` tool that can read files from the filesystem. nono restricts which files the agent can access -- no application code changes required.
-
+A FastAPI chat application powered by [Pydantic AI](https://ai.pydantic.dev/) that demonstrates how [nono](https://github.com/always-further/nono) enforces kernel-level sandboxing on an AI agent. The agent has a `read_file` tool that can read files from the filesystem. nono restricts which files the agent can access.
 <div align="center">
 <img src="assets/demo.png" alt="Chat app demo showing sandbox allow and deny" width="700"/>
 </div>
 
 ## How It Works
 
-The sandbox is applied in `cli.py` before uvicorn starts. Once applied, the kernel enforces filesystem restrictions on every syscall. The agent, FastAPI handlers, and all libraries run inside the sandbox without knowing it exists.
+The sandbox is applied in `cli.py` before uvicorn starts. Once applied, the kernel enforces filesystem restrictions on every syscall. The agent, FastAPI handlers, and all libraries run inside the sandbox.
 
 ```python
 from nono_py import CapabilitySet, AccessMode, apply
@@ -57,7 +56,7 @@ Ask the agent:
 - Python 3.10+
 - [uv](https://docs.astral.sh/uv/)
 - An `OPENAI_API_KEY` environment variable
-- macOS or Linux
+- macOS (the sandbox config in `cli.py` is macOS-specific -- `/var/run/mDNSResponder` for DNS resolution, `/etc` symlinked to `/private/etc`, etc. Linux would need different paths)
 
 ## Setup
 
@@ -78,17 +77,3 @@ uv run chat-app serve --no-sandbox
 ```
 
 Open http://127.0.0.1:8000 in your browser.
-
-## Project Structure
-
-```
-chat_app/
-├── src/chat_app/
-│   ├── cli.py           # Click CLI + nono sandbox setup
-│   ├── chat_app.py      # FastAPI app, Pydantic AI agent, read_file tool
-│   ├── chat_app.html    # Frontend HTML
-│   └── chat_app.ts      # Frontend TypeScript (streaming + tool event display)
-├── assets/
-│   └── demo.png         # Screenshot
-└── pyproject.toml       # Dependencies (includes nono-py)
-```
